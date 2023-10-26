@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>To-Do List</title>
+</head>
+<body>
+    <h1>To-Do List</h1>
+    <input type="text" id="title" placeholder="Task Title">
+    <input type="text" id="description" placeholder="Task Description">
+    <input type="date" id="dueDate">
+    <button onclick="addTask()">Add Task</button>
+    <ul id="taskList">
+        <!-- Task items will be displayed here -->
+    </ul>
+
+    <script>
+        function addTask() {
+            var title = document.getElementById("title").value;
+            var description = document.getElementById("description").value;
+            var dueDate = document.getElementById("dueDate").value;
+
+            // Create a new task object
+            var task = {
+                title: title,
+                description: description,
+                dueDate: dueDate
+            };
+
+            // Send an AJAX POST request to add the task
+            fetch('/tasks/add', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(task)
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Clear input fields
+                document.getElementById("title").value = "";
+                document.getElementById("description").value = "";
+                document.getElementById("dueDate").value = "";
+                // Refresh the task list
+                listTasks();
+            });
+        }
+
+        function markTaskAsComplete(index) {
+            // Send an AJAX POST request to mark the task as complete
+            fetch('/tasks/complete/' + index, {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Refresh the task list
+                listTasks();
+            });
+        }
+
+        function listTasks() {
+            // Send an AJAX GET request to fetch tasks
+            fetch('/tasks/list')
+            .then(response => response.json())
+            .then(tasks => {
+                var taskList = document.getElementById("taskList");
+                taskList.innerHTML = ""; // Clear existing list
+
+                tasks.forEach(function(task, index) {
+                    var listItem = document.createElement("li");
+                    listItem.innerHTML = 
+                        task.title + " - " + task.description + " - Due: " + task.dueDate +
+                        "<button onclick=\"markTaskAsComplete(" + index + ")\">Complete</button>";
+                    taskList.appendChild(listItem);
+                });
+            });
+        }
+
+        function removeTask(index) {
+            // Send an AJAX DELETE request to remove the task
+            fetch('/tasks/remove/' + index, {
+                method: 'DELETE'
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Refresh the task list
+                listTasks();
+            });
+        }
+
+        // Call listTasks on page load
+        listTasks();
+    </script>
+</body>
+</html>
