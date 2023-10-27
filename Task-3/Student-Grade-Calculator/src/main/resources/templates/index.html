@@ -1,0 +1,28 @@
+<!-- src/main/resources/templates/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Grade Calculator</title>
+</head>
+<body>
+    <h1>Student Grade Calculator</h1>
+    <form action="/calculate" method="post">
+        <label for="assignments">Assignments:</label>
+        <input type="number" name="assignments" required><br>
+
+        <label for="quizzes">Quizzes:</label>
+        <input type="number" name="quizzes" required><br>
+
+        <label for="midtermExam">Midterm Exam:</label>
+        <input type="number" name="midtermExam" required><br>
+
+        <label for="finalExam">Final Exam:</label>
+        <input type="number" name="finalExam" required><br>
+
+        <button type="submit">Calculate</button>
+    </form>
+
+    <h2>Final Grade: <span th:text="${student.finalGrade}"></span></h2>
+    <h2>Letter Grade: <span th:text="${student.letterGrade}"></span></h2>
+</body>
+</html>
